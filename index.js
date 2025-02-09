@@ -47,19 +47,19 @@ app.post("/chat", async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  const { userInput } = req.body;
-  if (!userInput) {
-    return res.status(400).json({ error: "Missing userInput field" });
-  }
+    const { userInput } = req.body;
+    if (!userInput) {
+        return res.status(400).json({ error: "Missing userInput field" });
+    }
 
-  const chatSession = model.startChat({ generationConfig, history: [] });
-  try {
-    const result = await chatSession.sendMessage(userInput);
-    res.json({ response: result.response.text() });
-  } catch (error) {
-    res.status(500).json({ error: "Error processing your request." });
-  }
-});
+    const chatSession = model.startChat({ generationConfig, history: [] });
+    try {
+        const result = await chatSession.sendMessage(userInput);
+        res.json({ response: result.response.text() });
+    } catch (error) {
+        res.status(500).json({ error: "Error processing your request." });
+    }
+    });
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

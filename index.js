@@ -44,6 +44,9 @@ app.get("/", (req, res) => {
 });
 
 app.post("/chat", async (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   const { userInput } = req.body;
   if (!userInput) {
     return res.status(400).json({ error: "Missing userInput field" });

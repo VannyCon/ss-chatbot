@@ -5,7 +5,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
 const port = process.env.PORT || 3000;
-const apiKey = process.env.GEMINI_API_KEY;
+const apiKey = "AIzaSyCvYOxwTiwwcO0IBPohZ-xkTayu7LdRbxQ";
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
@@ -21,8 +21,20 @@ const generationConfig = {
   responseMimeType: "text/plain",
 };
 
-// ✅ Enable CORS for all origins
+// ✅ Enable CORS for all requests
 app.use(cors());
+
+// ✅ Manually set CORS headers (in case Vercel strips them)
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+  next();
+});
+
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

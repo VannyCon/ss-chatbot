@@ -1,10 +1,9 @@
 const express = require("express");
-const path = require("path");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
-const port = 3000;
-const apiKey = "AIzaSyCvYOxwTiwwcO0IBPohZ-xkTayu7LdRbxQ";
+const port = process.env.PORT || 3000;
+const apiKey = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
@@ -20,26 +19,26 @@ const generationConfig = {
   responseMimeType: "text/plain",
 };
 
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
-app.use(express.urlencoded({ extended: true }));
-
-app.get("/", (req, res) => {
-  res.render("index", { response: null });
-});
+app.use(express.json());
 
 app.post("/chat", async (req, res) => {
-  const userInput = req.body.userInput;
-  const chatSession = model.startChat({ generationConfig, history: [] });
+  const { userInput } = req.body;
+
+  if (!userInput) {
+    return res.status(400).json({ error: "Missing userInput field" });
+  }
 
   try {
+    const chatSession = model.startChat({ generationConfig, history: [] });
     const result = await chatSession.sendMessage(userInput);
-    res.render("index", { response: result.response.text() });
+    res.json({ response: result.response.text() });
   } catch (error) {
-    res.render("index", { response: "Error processing your request." });
+    res.status(500).json({ error: "Error processing your request." });
   }
 });
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+
+module.exports = app;

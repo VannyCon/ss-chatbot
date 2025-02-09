@@ -22,6 +22,13 @@ const generationConfig = {
 app.use(express.json());
 
 app.post("/chat", async (req, res) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', '*');
+    // Handle OPTIONS request
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
   const { userInput } = req.body;
 
   if (!userInput) {

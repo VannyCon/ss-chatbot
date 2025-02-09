@@ -1,9 +1,11 @@
 const express = require("express");
+const cors = require("cors");
+const path = require("path");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
 const port = process.env.PORT || 3000;
-const apiKey = "AIzaSyCvYOxwTiwwcO0IBPohZ-xkTayu7LdRbxQ";
+const apiKey = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
@@ -19,24 +21,24 @@ const generationConfig = {
   responseMimeType: "text/plain",
 };
 
+// ✅ Enable CORS for all origins
+app.use(cors());
+app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.post("/chat", async (req, res) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.header('Access-Control-Allow-Headers', '*');
-    // Handle OPTIONS request
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-  const { userInput } = req.body;
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
+app.post("/chat", async (req, res) => {
+  const { userInput } = req.body;
   if (!userInput) {
     return res.status(400).json({ error: "Missing userInput field" });
   }
 
+  const chatSession = model.startChat({ generationConfig, history: [] });
   try {
-    const chatSession = model.startChat({ generationConfig, history: [] });
     const result = await chatSession.sendMessage(userInput);
     res.json({ response: result.response.text() });
   } catch (error) {
@@ -47,5 +49,3 @@ app.post("/chat", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
-
-module.exports = app;

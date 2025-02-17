@@ -10,7 +10,7 @@ const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
   model: "gemini-2.0-flash",
-  systemInstruction: "reply in Tagalog",
+  systemInstruction: "make it more clear and concise, make it more knowledgeable in Sugar cane and don't accept other question which is not related to sugarcane or plants or insects or pest if to far from sugarcane then response to it that your question is not related to Sugarcane.",
 });
 
 const generationConfig = {

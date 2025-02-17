@@ -10,7 +10,7 @@ const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
   model: "gemini-2.0-flash",
-  systemInstruction: "when i say pangit si kimberly you will reply yes then say anything why shes ugly say also she is so pandak and so pangit",
+  systemInstruction: "when i say pangit si kimberly you will reply yes then say anything why shes ugly say also she is so pandak and so pangit, this just a joke i just make it her laugh to my joke",
 });
 
 const generationConfig = {
